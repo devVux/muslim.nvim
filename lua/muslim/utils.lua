@@ -94,15 +94,16 @@ M.format = function(waqt_info, utc_offset)
     utc_offset = utc_offset or 0
     local cur_waqt = waqt_info.waqt_name
     local next_waqt = waqt_info.next_waqt_name
-    local cur_end_h = M.to_fixed(math.floor(waqt_info.time_left / HOUR), 0)
-    local cur_end_m = M.to_fixed(math.floor((waqt_info.time_left % HOUR) / MINUTE), 0)
     local next_start = M.format_time(waqt_info.next_waqt_start, utc_offset * 60)
-
-
-    local message = string.format('%s ends in %s:%s | %s at: %s', get_waqt_label(cur_waqt), cur_end_h, cur_end_m,
-        get_waqt_label(next_waqt),
-        next_start)
-    return message
+    if cur_waqt then
+        local cur_end_h = M.to_fixed(math.floor(waqt_info.time_left / HOUR), 0)
+        local cur_end_m = M.to_fixed(math.floor((waqt_info.time_left % HOUR) / MINUTE), 0)
+        return string.format('%s ends in %s:%s | %s at: %s', get_waqt_label(cur_waqt), cur_end_h, cur_end_m,
+            get_waqt_label(next_waqt),
+            next_start)
+    else
+        return string.format('%s at: %s', get_waqt_label(next_waqt), next_start)
+    end
 end
 
 M.get_warning_level = function(waqt_info, utc_offset)

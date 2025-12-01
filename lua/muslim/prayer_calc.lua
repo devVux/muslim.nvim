@@ -290,6 +290,10 @@ M.get_current_waqt = function()
         if (j > 5) then j = 1 end
         local waqt_start = waqt_times[waqt_order[i]]
         local next_waqt = waqt_times[waqt_order[j]]
+
+        if (i == 1) then
+            next_waqt = waqt_times['sunrise']
+        end
         if (i == 5) then
             next_waqt = next_waqt + ONE_DAY
         end
