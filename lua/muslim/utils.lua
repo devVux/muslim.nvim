@@ -94,8 +94,8 @@ M.format = function(waqt_info, utc_offset)
     utc_offset = utc_offset or 0
     local cur_waqt = waqt_info.waqt_name
     local next_waqt = waqt_info.next_waqt_name
-    local cur_end_h = M.to_fixed(waqt_info.time_left / HOUR, 0)
-    local cur_end_m = M.to_fixed((waqt_info.time_left % HOUR) / MINUTE, 0)
+    local cur_end_h = M.to_fixed(math.floor(waqt_info.time_left / HOUR), 0)
+    local cur_end_m = M.to_fixed(math.floor((waqt_info.time_left % HOUR) / MINUTE), 0)
     local next_start = M.format_time(waqt_info.next_waqt_start, utc_offset * 60)
 
 
@@ -111,8 +111,10 @@ M.get_warning_level = function(waqt_info, utc_offset)
         red = '#ff2c2c',
         orange = '#ffa500'
     }
-    local cur_end_h = waqt_info.time_left / HOUR
-    local cur_end_m = (waqt_info.time_left % HOUR) / MINUTE
+    local cur_end_h = math.floor(waqt_info.time_left / HOUR)
+    local cur_end_m = math.floor((waqt_info.time_left % HOUR) / MINUTE)
+
+    print(waqt_info.time_left, cur_end_h, cur_end_m)
 
     if cur_end_h >= 1 then
         return { fg = colors.green }
