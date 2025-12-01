@@ -1,17 +1,17 @@
-local fetch_async = require("muslim.prayer").fetch_async
-local format_output = require("muslim.prayer").format_output
+local format = require("muslim.utils").format
+local get_warning_level = require("muslim.utils").get_warning_level
 
 local M = {
     config = {
-        latitude  = nil,
-        longitude = nil,
-        timezone  = "UTC",
-        method    = 3, -- default: Muslim World League (example) — let user override
-        school    = 1, -- 0 = Shafi, 1 = Hanafi
-        api_url   = "https://api.aladhan.com/v1/timings"
+        refresh    = 1,
+        latitude   = nil,
+        longitude  = nil,
+        utc_offset = 0,
+        school     = 'hanafi',
+        method     = 'MWL',
+        -- api_url    = "https://api.aladhan.com/v1/timings"
     },
     prayer_time_text = 'Please wait...',
-    busy = false
 }
 
 
@@ -33,45 +33,65 @@ M.setup = function(opts)
     for k, v in pairs(opts) do M.config[k] = v end
 
     -- validate config
-    if not M.config.latitude or not M.config.longitude or not M.config.timezone then
-        vim.notify('[prayer.nvim] please set latitude, longitude and timezone', vim.log.levels.WARN)
+    if not M.config.latitude or not M.config.longitude or not M.config.utc_offset then
+        vim.notify('[prayer.nvim] please set latitude, longitude and utc_offset', vim.log.levels.WARN)
         return
     end
 
+    M.prayer_module = require("muslim.prayer_calc")
+
+    M.prayer_module.setup({
+        location = {
+            lat = M.config.latitude,
+            lng = M.config.longitude,
+        },
+        utc_offset = M.config.utc_offset,
+        asr = M.config.school,
+        method = M.config.method
+    })
+
     -- First run
-    M.update_async()
+    M.update()
 
     -- Refresh every 1 hour
     local timer = vim.loop.new_timer()
     timer:start(
-        3600 * 1000, -- delay first refresh after 1 hour
-        3600 * 1000, -- repeat every hour
+        M.config.refresh * 60 * 1000,
+        M.config.refresh * 60 * 1000,
         function()
-            M.update_async()
+            M.update()
         end
     )
 end
 
-M.update_async = function()
-    if M.busy then return end
-    M.busy = true
+M.update = function()
     M.prayer_time_text = 'Updating prayer times...'
 
-    fetch_async(M.config, function(body)
-        M.prayer_time_text = format_output(body)
-        M.busy = false
+    local current_waqt = M.prayer_module.get_current_waqt()
 
-        vim.schedule(function()
-            -- Hard refresh
-            pcall(function()
-                require("lualine").refresh {
-                    place = { "statusline", "tabline", "winbar" }
-                }
-            end)
-
-            -- Force actual redraw (fixes async updates)
-            vim.cmd("redrawstatus!")
+    M.prayer_time_text = format(current_waqt, M.config.utc_offset)
+    vim.schedule(function()
+        -- Hard refresh
+        pcall(function()
+            local sections = require("lualine").get_config().sections
+            for col, info in pairs(sections) do
+                for idx in ipairs(info) do
+                    local section = info[idx]
+                    if (section.id == 'muslim.nvim') then
+                        section.color = get_warning_level(current_waqt)
+                    end
+                end
+            end
+            require('lualine').setup({
+                sections = sections
+            })
+            require("lualine").refresh {
+                place = { "statusline", "tabline", "winbar" }
+            }
         end)
+
+        -- Force actual redraw (fixes async updates)
+        vim.cmd("redrawstatus!")
     end)
 end
 
