@@ -14,13 +14,13 @@ A plugin to get prayer times and useful islamic essentials inside neovim
 - supports higher latitude adjustment
 - lualine integration to display current waqt status
 
-## Requriements
+## 📦 Requriements
 
 - Neovim >= 0.11
 - [plenary.nvim](https://github.com/nvim-lua/plenary.nvim)
 - [lualine](https://github.com/nvim-lualine/lualine.nvim) _(optional)_
 
-## Installation
+## 🚀 Installation
 
 Install the plugin with your preferred package manager
 
@@ -49,7 +49,7 @@ Install the plugin with your preferred package manager
     method     = 'MWL',     -- calculation method. default is Muslim World League
 }
 ```
-## Setup
+## 🛠️ Setup
 
 ```lua
 local muslim = require("muslim")
@@ -63,7 +63,7 @@ muslim.setup({
 
 ```
 
-## Commands
+## 🧭 Commands
 
 **`muslim.nvim`** supports the following user commands.
 
@@ -86,7 +86,7 @@ muslim.setup({
 }
 ```
 
-## Integration with lualine
+## 🧩 Integration with lualine
 
 If you want the prayer times to appear in the statusline, you have to update your lualine configuration to add the following to the section of the lualine you want the text to be.
 
@@ -94,7 +94,7 @@ If you want the prayer times to appear in the statusline, you have to update you
 { muslim.prayer_time, id = "muslim.nvim" }
 ```
 
-### Sample lualine configuration
+### 🎨 Sample lualine configuration
 
 To get something similar to the image above, the configuration can be as below:
 
