@@ -12,6 +12,7 @@ A plugin to get prayer times and useful islamic essentials inside neovim
 - supports hanafi school of thought adjustments
 - supported methods: MWL, ISNA, Egypt, Makkah, Karachi, Tehran, Jafari, France, Russia, Singapore.
 - supports higher latitude adjustment
+- lualine integration to display current waqt status
 
 ## Requriements
 
