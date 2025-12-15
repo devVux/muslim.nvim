@@ -1,6 +1,3 @@
-local format = require("muslim.utils").format
-local get_warning_level = require("muslim.utils").get_warning_level
-
 local M = {
     config = {
         refresh    = 1,
@@ -24,8 +21,8 @@ M.setup = function(opts)
     end
     -- Check if lualine is intalled
     if not pcall(require, 'lualine') then
-        vim.notify('[prayer.nvim] please install lualine', vim.log.levels.WARN)
-        return
+        vim.notify('[prayer.nvim] did not find lualine. only user_commands will be available', vim.log.levels.WARN)
+        -- return
     end
 
     -- init config
@@ -53,7 +50,7 @@ M.setup = function(opts)
     -- First run
     M.update()
 
-    -- Refresh every 1 hour
+    -- Refresh every x minute(s)
     local timer = vim.loop.new_timer()
     timer:start(
         M.config.refresh * 60 * 1000,
@@ -65,38 +62,53 @@ M.setup = function(opts)
 end
 
 M.update = function()
+    local format = require("muslim.utils").format
     M.prayer_time_text = 'Updating prayer times...'
 
     local current_waqt = M.prayer_module.get_current_waqt()
 
     M.prayer_time_text = format(current_waqt, M.config.utc_offset)
-    vim.schedule(function()
-        -- Hard refresh
-        pcall(function()
-            local sections = require("lualine").get_config().sections
-            for col, info in pairs(sections) do
-                for idx in ipairs(info) do
-                    local section = info[idx]
-                    if (section.id == 'muslim.nvim') then
-                        section.color = get_warning_level(current_waqt)
-                    end
-                end
-            end
-            require('lualine').setup({
-                sections = sections
-            })
-            require("lualine").refresh {
-                place = { "statusline", "tabline", "winbar" }
-            }
-        end)
 
-        -- Force actual redraw (fixes async updates)
-        vim.cmd("redrawstatus!")
+    -- update lualine if available
+    vim.schedule(function()
+        M.update_lualine(current_waqt)
     end)
 end
 
 M.prayer_time = function()
     return M.prayer_time_text
 end
+
+M.update_lualine = function(current_waqt)
+    if not pcall(require, 'lualine') then
+        return
+    end
+    local get_warning_level = require("muslim.utils").get_warning_level
+    pcall(function()
+        local sections = require("lualine").get_config().sections
+        for col, info in pairs(sections) do
+            for idx in ipairs(info) do
+                local section = info[idx]
+                if (section.id == 'muslim.nvim') then
+                    section.color = get_warning_level(current_waqt)
+                end
+            end
+        end
+        require('lualine').setup({
+            sections = sections
+        })
+        require("lualine").refresh {
+            place = { "statusline", "tabline", "winbar" }
+        }
+    end)
+
+    -- Force actual redraw (fixes async updates)
+    vim.cmd("redrawstatus!")
+end
+
+
+vim.api.nvim_create_user_command("PrayerTimes", function()
+    return M.prayer_module.get_times()
+end, {})
 
 return M
