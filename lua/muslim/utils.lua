@@ -98,9 +98,15 @@ M.format = function(waqt_info, utc_offset)
     if cur_waqt then
         local cur_end_h = M.to_fixed(math.floor(waqt_info.time_left / HOUR), 0)
         local cur_end_m = M.to_fixed(math.floor((waqt_info.time_left % HOUR) / MINUTE), 0)
-        return string.format('%s ends in %s:%s | %s at: %s', get_waqt_label(cur_waqt), cur_end_h, cur_end_m,
-            get_waqt_label(next_waqt),
-            next_start)
+        if next_waqt then
+            return string.format('%s ends in %s:%s | %s at: %s', get_waqt_label(cur_waqt), cur_end_h, cur_end_m,
+                get_waqt_label(next_waqt),
+                next_start)
+        else
+            return string.format('%s ends in %s:%s | %s at: %s', get_waqt_label(cur_waqt), cur_end_h, cur_end_m,
+                get_waqt_label(next_waqt),
+                next_start)
+        end
     else
         return string.format('%s at: %s', get_waqt_label(next_waqt), next_start)
     end

@@ -300,7 +300,9 @@ M.get_current_waqt = function()
         next_waqt = next_waqt - ONE_SECOND
 
         -- print(cur_time, waqt_start, next_waqt)
+        -- print(string.format('current waqt: %s, next waqt: %s', waqt_order[i], waqt_order[j]))
         if cur_time >= waqt_start and cur_time <= next_waqt then
+            -- print(string.format('current waqt: %s, next waqt: %s', waqt_order[i], waqt_order[j]))
             cur_waqt_info = {
                 waqt_name = waqt_order[i],
                 time_left = next_waqt - cur_time,
@@ -308,6 +310,22 @@ M.get_current_waqt = function()
                 next_waqt_name = waqt_order[j]
             }
             break
+        end
+    end
+    if next(cur_waqt_info) == nil then
+        -- print('current waqt info is empty...')
+        for i in ipairs(waqt_order) do
+            local next_waqt = waqt_times[waqt_order[i]]
+            next_waqt = next_waqt - ONE_SECOND
+
+            if cur_time < next_waqt then
+                -- print(string.format('current waqt: %s, next waqt: %s', waqt_order[i], waqt_order[j]))
+                cur_waqt_info = {
+                    next_waqt_start = next_waqt,
+                    next_waqt_name = waqt_order[i]
+                }
+                break
+            end
         end
     end
     return cur_waqt_info
