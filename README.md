@@ -28,7 +28,7 @@ Install the plugin with your preferred package manager
 {
     "tajirhas9/muslim.nvim",
     dependencies = {
-        "nvim-lua/plenary",
+        "nvim-lua/plenary.nvim",
         -- OPTIONAL
         "nvim-lualine/lualine"
     }
