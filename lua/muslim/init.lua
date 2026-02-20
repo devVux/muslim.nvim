@@ -79,6 +79,10 @@ M.prayer_time = function()
     return M.prayer_time_text
 end
 
+M.today_prayer_time_epochs = function()
+    return M.prayer_module.get_times()
+end
+
 M.update_lualine = function(current_waqt)
     if not pcall(require, 'lualine') then
         return
@@ -106,9 +110,14 @@ M.update_lualine = function(current_waqt)
     vim.cmd("redrawstatus!")
 end
 
-
 vim.api.nvim_create_user_command("PrayerTimes", function()
-    return M.prayer_module.get_times()
+    local times = M.prayer_module.get_times()
+    local formatted = {}
+    for k, v in pairs(times) do
+        formatted[k] = require("muslim.utils").format_time(v, M.config.utc_offset * 60, "12H")
+    end
+    vim.print(formatted)
+    return formatted
 end, {})
 
 return M

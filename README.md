@@ -69,22 +69,31 @@ muslim.setup({
 
 | Command | Description |
 | -- | -- |
-| `:PrayerTimes` | Returns a table with the waqt timestamps for the day |
+| `:PrayerTimes` | Returns a table with formatted waqt times for the day |
 
 ### `:PrayerTimes` sample return value
 
 ```lua
 {
-  asr = 1765791300000,
-  dhuhr = 1765777680000,
-  fajr = 1765753500000,
-  isha = 1765801560000,
-  maghrib = 1765797120000,
-  midnight = 1765820880000,
-  sunrise = 1765758240000,
-  sunset = 1765797060000
+  asr = "04:15 PM",
+  dhuhr = "12:06 PM",
+  fajr = "05:06 AM",
+  isha = "07:03 PM",
+  maghrib = "05:53 PM",
+  midnight = "12:06 AM",
+  sunrise = "06:21 AM",
+  sunset = "05:52 PM"
 }
 ```
+
+## 🧰 Utility functions
+
+| Function name | Description |
+| -- | -- |
+| `prayer_time`  | Returns a formatted text. Shows remaining time for current waqt (if valid) and start time of next waqt |
+| `today_prayer_time_epochs` | Returns a table with all the waqt time _(in epochs)_ for the day |
+
+These functions can be used to enhance the behavior of the plugin. For example, create a scheduler with `vim.schedule` and show the prayer time as a popup notification for certain warnings.
 
 ## 🧩 Integration with lualine
 
