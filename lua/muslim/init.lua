@@ -111,12 +111,21 @@ M.update_lualine = function(current_waqt)
 end
 
 vim.api.nvim_create_user_command("PrayerTimes", function()
+    local waqt_order = { "fajr", "sunrise", "dhuhr", "asr", "sunset", "maghrib", "isha", "midnight" }
     local times = M.prayer_module.get_times()
     local formatted = {}
     for k, v in pairs(times) do
         formatted[k] = require("muslim.utils").format_time(v, M.config.utc_offset * 60, "12H")
     end
-    vim.print(formatted)
+    -- vim.print(formatted)
+    print("|" .. string.rep("-", 25) .. "|")
+    print(string.format("| %-10s | %-10s |", 'Waqt', 'Time'))
+    print("|" .. string.rep("-", 25) .. "|")
+    for _, k in ipairs(waqt_order) do
+        local v = formatted[k]
+        print(string.format("| %-10s | %-10s |", k, v))
+    end
+    print("|" .. string.rep("-", 25) .. "|")
     return formatted
 end, {})
 
