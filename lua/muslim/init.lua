@@ -1,11 +1,12 @@
 local M = {
     config = {
-        refresh    = 1,
-        latitude   = nil,
-        longitude  = nil,
-        utc_offset = 0,
-        school     = 'hanafi',
-        method     = 'MWL',
+        refresh     = 1,
+        latitude    = nil,
+        longitude   = nil,
+        utc_offset  = 0,
+        school      = 'hanafi',
+        method      = 'MWL',
+        time_format = '12H',  -- '12H' for 12-hour with AM/PM, '24h' for 24-hour
         -- api_url    = "https://api.aladhan.com/v1/timings"
     },
     prayer_time_text = 'Please wait...',
@@ -67,7 +68,7 @@ M.update = function()
 
     local current_waqt = M.prayer_module.get_current_waqt()
 
-    M.prayer_time_text = format(current_waqt, M.config.utc_offset)
+    M.prayer_time_text = format(current_waqt, M.config.utc_offset, M.config.time_format)
 
     -- update lualine if available
     vim.schedule(function()
@@ -115,7 +116,7 @@ vim.api.nvim_create_user_command("PrayerTimes", function()
     local times = M.prayer_module.get_times()
     local formatted = {}
     for k, v in pairs(times) do
-        formatted[k] = require("muslim.utils").format_time(v, M.config.utc_offset * 60, "12H")
+        formatted[k] = require("muslim.utils").format_time(v, M.config.utc_offset * 60, M.config.time_format)
     end
     -- vim.print(formatted)
     print("|" .. string.rep("-", 25) .. "|")
