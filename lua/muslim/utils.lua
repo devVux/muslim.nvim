@@ -91,25 +91,25 @@ local get_waqt_label = function(waqt)
 end
 
 M.format = function(waqt_info, utc_offset, time_format)
-    utc_offset = utc_offset or 0
-    local cur_waqt = waqt_info.waqt_name
-    local next_waqt = waqt_info.next_waqt_name
-    local next_start = M.format_time(waqt_info.next_waqt_start, utc_offset * 60, time_format)
-    if cur_waqt then
-        local cur_end_h = M.to_fixed(math.floor(waqt_info.time_left / HOUR), 0)
-        local cur_end_m = M.to_fixed(math.floor((waqt_info.time_left % HOUR) / MINUTE), 0)
-        if next_waqt then
-            return string.format('%s ends in %s:%s | %s at: %s', get_waqt_label(cur_waqt), cur_end_h, cur_end_m,
-                get_waqt_label(next_waqt),
-                next_start)
-        else
-            return string.format('%s ends in %s:%s | %s at: %s', get_waqt_label(cur_waqt), cur_end_h, cur_end_m,
-                get_waqt_label(next_waqt),
-                next_start)
-        end
-    else
-        return string.format('%s at: %s', get_waqt_label(next_waqt), next_start)
-    end
+	utc_offset = utc_offset or 0
+	local cur_waqt = waqt_info.waqt_name
+	local next_waqt = waqt_info.next_waqt_name
+	local next_start = M.format_time(waqt_info.next_waqt_start, utc_offset * 60, time_format)
+	if cur_waqt then
+		local cur_end_h = M.to_fixed(math.floor(waqt_info.time_left / HOUR), 0)
+		local cur_end_m = M.to_fixed(math.floor((waqt_info.time_left % HOUR) / MINUTE), 0)
+		if next_waqt then
+			return string.format('%s ends in %s:%s | %s at: %s', get_waqt_label(cur_waqt), cur_end_h, cur_end_m,
+				get_waqt_label(next_waqt),
+				next_start)
+		else
+			return string.format('%s ends in %s:%s | %s at: %s', get_waqt_label(cur_waqt), cur_end_h, cur_end_m,
+				get_waqt_label(next_waqt),
+				next_start)
+		end
+	else
+		return string.format('%s at: %s', get_waqt_label(next_waqt), next_start)
+	end
 end
 
 M.get_warning_level = function(waqt_info, utc_offset)
@@ -123,13 +123,13 @@ M.get_warning_level = function(waqt_info, utc_offset)
 
 	-- print(waqt_info.time_left, cur_end_h, cur_end_m)
 
-    if cur_end_h >= 1 then
-        return { fg = colors.green }
-    elseif cur_end_m < 30 then
-        return { fg = colors.red }
-    else
-        return { fg = colors.orange }
-    end
+	if cur_end_h >= 1 then
+		return { fg = colors.green }
+	elseif cur_end_m < 10 then
+		return { fg = colors.red }
+	else
+		return { fg = colors.orange }
+	end
 end
 
 return M
